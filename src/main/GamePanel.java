@@ -1,58 +1,61 @@
 package main;
 
-import java.awt.Color;
-import java.awt.Dimension;
+
 import java.awt.Graphics;
+
+import java.awt.*;
 
 import javax.swing.JPanel;
 
-public class GamePanel extends JPanel implements Runnable{
+import Inputs.MouseInputs;
 
-	//Screen settings
-	final int originalTileSize = 16; //16by16 title, size of player character, map titles
-	final int scale = 3; 
+
+import static main.Game.gamesWidth;
+import static main.Game.gamesHeight;
+
+public class GamePanel extends JPanel {
+
+	private MouseInputs mouseInputs;
+	private Game game; 
 	
-	final int tileSize = originalTileSize * scale; // 48x48
-	final int maxScreenCol = 16;
-	final int maxScreenRow = 12; 
-	final int screenWidth = tileSize * maxScreenCol; //768 pixels 
-	final int screenHeight = tileSize * maxScreenRow; //576 pixels size of game screen
-	
-	Thread gameThread; //something you can start and stop - it will keep going - 60FPS
-	
-	public GamePanel() {
-		this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-		this.setBackground(Color.black);
-		this.setDoubleBuffered((true));
-	}
-	
-	public void startGameThread() {
+	public GamePanel(Game game) {
+		mouseInputs = new MouseInputs(this);
+		this.game = game; 
 		
-		gameThread = new Thread(this);
-		gameThread.start(); //automatically call run method
-	}
-
-	@Override
-	public void run() {
-		//creating game loop
-		while(gameThread != null) {
-			
-			
-//			System.out.print("The game loop is running"); 
-			//1. UPDATE INFROMATION SUCH AS CHARACTER POSITIONS
-			update();
-			
-			//2. DRAW THE SCREEN  WITH THE UPDATE INFROMATION - XY CORD OF CHAR - IF HIT KEY UPDATE XY
-			repaint();
-		}
-	}
-	public void update() {
+		setPanelSize();
+		addKeyListener(new Inputs.KeyboardInputs(this)); //refers to gamePanel
+		addMouseListener(mouseInputs);
+		addMouseMotionListener(mouseInputs);
 		
 	}
+	
+
+
+	//creating the window border pixels 
+	private void setPanelSize() {
+		Dimension size = new Dimension(gamesWidth, gamesHeight);
+		setPreferredSize(size);
+		//size: 1248 by 672
+		System.out.println("size: " + gamesWidth + " | " + gamesHeight);
+	}
+
+
+	//updates animations
+	public void updateGame() {
+	
+		
+	}
+	
+	//graphics allow us to draw on JPanel
 	public void paintComponent(Graphics g) {
-		
+		//calls from JPanel
 		super.paintComponent(g);
 		
-		Graphics2D g2 = (Graphics2D) g;
+		game.render(g);
+	
+}
+	public Game getGame() {
+		return game;
 	}
+	
 }
